@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APILab1.Migrations
 {
     [DbContext(typeof(CvDBContext))]
-    [Migration("20250309143645_updatedTableNames")]
-    partial class updatedTableNames
+    [Migration("20250309144153_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
