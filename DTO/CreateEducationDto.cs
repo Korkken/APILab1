@@ -4,10 +4,10 @@ namespace APILab1.DTO
 {
     public class CreateEducationDto
     {
-        public string Skola { get; set; }
-        public string Examen { get; set; }
-        public DateOnly StartDatum { get; set; }
-        public DateOnly SlutDatum { get; set; }
+        public string School { get; set; }
+        public string Degree { get; set; }
+        public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
         
         public int PersonId_FK { get; set; }
     }

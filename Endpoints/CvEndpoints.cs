@@ -31,7 +31,7 @@ namespace APILab1.Endpoints
             app.MapGet("/personInfo/{id}", async (CvDBContext context, int id) =>
             {
                 var personList = await context.PersonInfos
-                    .Where(p => p.Id == id) 
+                    .Where(p => p.Id == id)
                     .Select(p => new PersonDto
                     {
                         personName = p.Name,
@@ -56,9 +56,9 @@ namespace APILab1.Endpoints
 
                 var personInfo = new PersonInfo
                 {
-                    Name = newPerson.Namn,
-                    Description = newPerson.Beskrivning,
-                    ContactDetails = newPerson.Kontaktuppgifter,
+                    Name = newPerson.Name,
+                    Description = newPerson.Description,
+                    ContactDetails = newPerson.ContactDetails,
                 };
 
                 context.PersonInfos.Add(personInfo);
@@ -81,11 +81,11 @@ namespace APILab1.Endpoints
 
                 var education = new Education
                 {
-                     School = newEducation.Skola,
-                     Degree = newEducation.Examen,
-                     StartDate = newEducation.StartDatum,
-                     EndDate = newEducation.SlutDatum,
-                     PersonId_FK = newEducation.PersonId_FK,
+                    School = newEducation.School,
+                    Degree = newEducation.Degree,
+                    StartDate = newEducation.StartDate,
+                    EndDate = newEducation.EndDate,
+                    PersonId_FK = newEducation.PersonId_FK,
                 };
 
                 context.Educations.Add(education);
@@ -109,11 +109,11 @@ namespace APILab1.Endpoints
 
                 var workExp = new WorkExperience
                 {
-                    JobTitle = newWorkExp.Jobbtitel,
-                    Company = newWorkExp.Företag,
-                    WorkDescription = newWorkExp.Beskrivning,
-                    StartYear = newWorkExp.StartÅr,
-                    EndYear = newWorkExp.SlutÅr,
+                    JobTitle = newWorkExp.JobTitle,
+                    Company = newWorkExp.Company,
+                    WorkDescription = newWorkExp.WorkDescription,
+                    StartYear = newWorkExp.StartYear,
+                    EndYear = newWorkExp.EndYear,
                     PersonId_FK = newWorkExp.PersonId_FK
                 };
 
@@ -147,6 +147,61 @@ namespace APILab1.Endpoints
                 return Results.Ok(existingEducation.ToEducationDto());
             });
 
+            app.MapPatch("/WorkExperience", async (CvDBContext context, int id, UpdateWorkExperienceDto workExperience) =>
+            {
+                var existingWorkExperience = await context.WorkExperiences
+                    .SingleOrDefaultAsync(w => w.Id == id);
+
+                if (existingWorkExperience == null)
+                {
+                    return Results.NotFound($"Jobb med ID {id} hittades inte.");
+                }
+                if (workExperience.JobTitle != null)
+                    existingWorkExperience.JobTitle = workExperience.JobTitle;
+                if (workExperience.Company != null)
+                    existingWorkExperience.Company = workExperience.Company;
+                if (workExperience.WorkDescription != null)
+                    existingWorkExperience.WorkDescription = workExperience.WorkDescription;
+                if (workExperience.StartYear != null)
+                    existingWorkExperience.StartYear = workExperience.StartYear;
+                if (workExperience.EndYear != null)
+                    existingWorkExperience.EndYear = workExperience.EndYear;
+
+                await context.SaveChangesAsync();
+
+                return Results.Ok(existingWorkExperience.ToWorkExpDto());
+
+            });
+
+            app.MapDelete("/WorkExperience", (CvDBContext context, int id) =>
+            {
+                var WorkExperience = context.WorkExperiences.SingleOrDefault(w => w.Id == id);
+
+                if (WorkExperience == null)
+                {
+                    return Results.NotFound("Workexperience not found");
+                }
+                context.WorkExperiences.Remove(WorkExperience);
+                context.SaveChanges();
+
+                return Results.Ok();
+
+            });
+
+            app.MapDelete("/Education", (CvDBContext context, int id) =>
+            {
+                var Education = context.Educations.SingleOrDefault(e => e.Id == id);
+
+                if (Education == null)
+                {
+                    return Results.NotFound("Education not found");
+                }
+                context.Educations.Remove(Education);
+                context.SaveChanges();
+
+                return Results.Ok();
+
+            });
         }
 
     }

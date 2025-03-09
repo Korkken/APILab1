@@ -3,8 +3,8 @@
     public class CreatePersonDto
     {
 
-        public string Namn { get; set; }
-        public string Beskrivning { get; set; }
-        public string Kontaktuppgifter { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string ContactDetails { get; set; }
     }
 }
