@@ -1,9 +1,10 @@
-
 using APILab1.Data;
 using APILab1.DTO;
 using APILab1.Endpoints;
+using APILab1.Models;
 using APILab1.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace APILab1
 {
@@ -26,7 +27,7 @@ namespace APILab1
             });
 
             builder.Services.AddScoped<CVService>();
-
+            builder.Services.AddHttpClient();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -36,10 +37,12 @@ namespace APILab1
                 app.UseSwaggerUI();
             }
 
+
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            
             CvEndpoints.RegisterEndpoints(app);
             app.Run();
         }

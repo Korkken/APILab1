@@ -3,9 +3,11 @@ using APILab1.DTO;
 using APILab1.Extensions;
 using APILab1.Models;
 using APILab1.Services;
+using Azure;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Text.Json;
 
 namespace APILab1.Endpoints
 {
@@ -201,6 +203,50 @@ namespace APILab1.Endpoints
 
                 return Results.Ok();
 
+            });
+
+            app.MapGet("/api/github/repos/{username}", async (HttpClient client, string username) =>
+            {
+
+                {
+                    string url = $"https://api.github.com/users/{username}/repos";
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
+
+                    try
+                    {
+                        HttpResponseMessage response = await client.GetAsync(url);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string responseData = await response.Content.ReadAsStringAsync();
+                            Console.WriteLine(responseData);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Error: {response.StatusCode}");
+                        }
+
+                        var jsonResponse = await response.Content.ReadAsStringAsync();
+                        var repos = JsonSerializer.Deserialize<List<GithubRepo>>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        var result = repos?.ConvertAll(repo => new
+                        {
+                            repositoryName = repo.Name,
+                            Language = string.IsNullOrEmpty(repo.Language) ? "okänt" : repo.Language,
+                            Description = string.IsNullOrEmpty(repo.Description) ? "saknas" : repo.Description,
+                            RepositoryUrl = repo.Html_Url
+                        });
+
+                        return Results.Ok(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        return Results.Problem($"Server error: {ex.Message}");
+                    }
+
+
+
+                }
             });
         }
 
